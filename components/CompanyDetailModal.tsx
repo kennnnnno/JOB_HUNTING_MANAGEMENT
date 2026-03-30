@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useMemo } from "react";
 import { X, Trash2, ExternalLink, Copy, Link as LinkIcon } from "lucide-react";
 import { db, Company } from "@/lib/db";
 
@@ -29,6 +29,29 @@ export default function CompanyDetailModal({
   setSelectedCompany,
   copyFeedback,
 }: CompanyDetailModalProps) {
+  const sortedAndClassifiedEvents = useMemo(() => {
+    if (!companyEvents) return [];
+
+    const now = new Date();
+    const todayStr = now.toISOString().split("T")[0];
+
+    const futureEvents: any[] = [];
+    const pastEvents: any[] = [];
+
+    companyEvents.forEach((ev) => {
+      if (ev.date >= todayStr) {
+        futureEvents.push(ev);
+      } else {
+        pastEvents.push(ev);
+      }
+    });
+
+    futureEvents.sort((a, b) => a.date.localeCompare(b.date));
+    pastEvents.sort((a, b) => b.date.localeCompare(a.date));
+
+    return [...futureEvents, ...pastEvents];
+  }, [companyEvents]);
+
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-md flex items-end z-[60] p-0">
       <div className="bg-white w-full rounded-t-[48px] p-8 shadow-2xl max-h-[90vh] overflow-y-auto animate-in slide-in-from-bottom duration-300">
@@ -70,22 +93,35 @@ export default function CompanyDetailModal({
 
         <div className="mb-10">
           <h3 className="text-[10px] font-black text-gray-300 uppercase tracking-widest mb-4 px-1">
-            Upcoming Events
+            Events
           </h3>
 
           <div className="space-y-3 mb-6">
-            {companyEvents
-              ?.sort((a, b) => a.date.localeCompare(b.date))
-              .map((ev) => (
+            {sortedAndClassifiedEvents.map((ev) => {
+              const now = new Date();
+              const todayStr = now.toISOString().split("T")[0];
+              const isPast = ev.date < todayStr;
+
+              return (
                 <div
                   key={ev.id}
-                  className="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl border border-gray-100"
+                  className={`flex items-center gap-4 p-4 rounded-2xl border transition-all ${
+                    isPast
+                      ? "bg-gray-100/50 border-gray-100 opacity-60"
+                      : "bg-gray-50 border-gray-100"
+                  }`}
                 >
                   <div
-                    className="w-1.5 h-10 rounded-full"
-                    style={{ backgroundColor: typeStyles[ev.type]?.dot }}
+                    className={`w-1.5 h-10 rounded-full ${isPast ? "bg-gray-300" : ""}`}
+                    style={
+                      !isPast
+                        ? { backgroundColor: typeStyles[ev.type]?.dot }
+                        : {}
+                    }
                   ></div>
-                  <div className="flex-1 text-sm font-bold text-gray-700">
+                  <div
+                    className={`flex-1 text-sm font-bold ${isPast ? "text-gray-400" : "text-gray-700"}`}
+                  >
                     <div className="text-[10px] opacity-40">
                       {ev.date} {ev.time}
                       {ev.endTime ? `〜${ev.endTime}` : ""}
@@ -102,8 +138,9 @@ export default function CompanyDetailModal({
                     <Trash2 size={16} />
                   </button>
                 </div>
-              ))}
-            {companyEvents?.length === 0 && (
+              );
+            })}
+            {sortedAndClassifiedEvents.length === 0 && (
               <p className="text-center py-4 text-xs font-bold text-gray-300 bg-gray-50/50 rounded-2xl border border-dashed border-gray-200">
                 予定がありません
               </p>
@@ -124,10 +161,7 @@ export default function CompanyDetailModal({
                 className="p-3 bg-white rounded-xl text-xs font-bold outline-none"
                 value={eventForm.type}
                 onChange={(e) =>
-                  setEventForm({
-                    ...eventForm,
-                    type: e.target.value as any,
-                  })
+                  setEventForm({ ...eventForm, type: e.target.value as any })
                 }
               >
                 {Object.entries(typeStyles).map(([k, s]: any) => (
@@ -191,9 +225,7 @@ export default function CompanyDetailModal({
             placeholder="提出した内容や、面接での受け答えをメモ..."
             defaultValue={selectedCompany.memo}
             onBlur={(e) =>
-              db.companies.update(selectedCompany.id!, {
-                memo: e.target.value,
-              })
+              db.companies.update(selectedCompany.id!, { memo: e.target.value })
             }
           />
         </div>
