@@ -1,0 +1,87 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+
+.fc {
+  --fc-border-color: #f3f4f6; 
+  --fc-button-bg-color: #ffffff;
+  --fc-button-text-color: #3b82f6;
+  --fc-button-border-color: #e5e7eb;
+  --fc-button-hover-bg-color: #eff6ff;
+  --fc-button-active-bg-color: #dbeafe;
+  font-family: inherit;
+}
+
+.fc .fc-toolbar-title {
+  font-size: 1.1rem !important;
+  font-weight: 800;
+  color: #1f2937;
+}
+
+.fc .fc-col-header-cell {
+  padding: 12px 0 !important;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #9ca3af;
+  background-color: #f9fafb;
+}
+
+.fc .fc-daygrid-day-number {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #4b5563;
+  padding: 8px !important;
+}
+
+.fc .fc-day-today {
+  background-color: #f0f7ff !important;
+}
+.fc .fc-day-today .fc-daygrid-day-number {
+  color: #3b82f6;
+  font-weight: 800;
+}
+
+.fc-v-event, .fc-h-event {
+  background-color: transparent !important;
+  border: none !important;
+}
+
+.fc-event-main {
+  padding: 2px 4px !important;
+}
+
+.fc-daygrid-event {
+  border-radius: 6px !important;
+  margin-top: 2px !important;
+  font-size: 0.65rem !important;
+  font-weight: 700 !important;
+  border: none !important;
+  padding: 1px 2px !important;
+}
+
+.fc-day-sat { color: #3b82f6; }
+.fc-day-sun { color: #ef4444; }
