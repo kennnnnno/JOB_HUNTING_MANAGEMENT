@@ -1,55 +1,55 @@
 "use client";
 
+import React from "react";
 import { Company } from "@/lib/db";
-import { ChevronRight, Globe } from "lucide-react";
+import { Copy, Check } from "lucide-react";
 
-export default function ListView({
-  companies,
-  onSelect,
-}: {
+interface ListViewProps {
   companies: Company[] | undefined;
   onSelect: (company: Company) => void;
-}) {
+}
+
+export default function ListView({ companies, onSelect }: ListViewProps) {
+  const [copyId, setCopyId] = React.useState<number | null>(null);
+
+  const handleCopyId = (e: React.MouseEvent, id: string | undefined, companyId: number) => {
+    e.stopPropagation();
+    if (!id) return;
+    navigator.clipboard.writeText(id);
+    setCopyId(companyId);
+    setTimeout(() => setCopyId(null), 2000);
+  };
+
   return (
-    <div className="space-y-3 px-1 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="space-y-4">
       {companies?.map((company) => (
         <div
           key={company.id}
-          className="group flex items-center bg-white rounded-[24px] border border-gray-100 shadow-sm hover:shadow-md transition-all active:scale-[0.98]"
+          onClick={() => onSelect(company)}
+          className="bg-white p-6 rounded-[32px] shadow-sm border border-gray-100 flex justify-between items-center active:scale-[0.98] transition-all"
         >
-          {/* 左側：企業詳細ボタン（名前を大きく） */}
-          <button
-            onClick={() => onSelect(company)}
-            className="flex-1 flex flex-col items-start px-6 py-5 text-left"
-          >
-            <h3 className="font-black text-gray-800 text-lg tracking-tighter">
-              {company.name}
-            </h3>
-            <p className="text-[9px] font-bold text-blue-500 uppercase mt-0.5 flex items-center gap-0.5">
-              View Details <ChevronRight size={10} />
+          <div className="flex-1">
+            <h3 className="text-lg font-black text-gray-800">{company.name}</h3>
+            <p className="text-[10px] font-bold text-gray-300 mt-1 uppercase tracking-wider">
+              {company.loginId ? `ID: ${company.loginId}` : "ID未登録"}
             </p>
-          </button>
-
-          {/* 右側：URLリンクボタン（URLがある場合のみ） */}
-          {company.url && (
-            <a
-              href={company.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="h-full flex items-center justify-center px-6 border-l border-gray-100 text-gray-300 hover:text-blue-500 transition-colors"
-              onClick={(e) => e.stopPropagation()}
+          </div>
+          
+          {company.loginId && (
+            <button
+              onClick={(e) => handleCopyId(e, company.loginId, company.id!)}
+              className={`p-3 rounded-2xl transition-all ${
+                copyId === company.id ? "bg-green-50 text-green-500" : "bg-gray-50 text-gray-400"
+              }`}
             >
-              <Globe size={20} strokeWidth={2.5} />
-            </a>
+              {copyId === company.id ? <Check size={18} /> : <Copy size={18} />}
+            </button>
           )}
         </div>
       ))}
-
       {companies?.length === 0 && (
-        <div className="py-20 text-center">
-          <p className="text-gray-300 font-bold text-sm">
-            No companies added yet.
-          </p>
+        <div className="text-center py-20">
+          <p className="text-gray-300 font-bold text-sm">企業が登録されていません</p>
         </div>
       )}
     </div>
