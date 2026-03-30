@@ -4,7 +4,7 @@
 
 ## 公開URL
 
-https://job-hunting-management-ahkndzx40-kennnnnnos-projects.vercel.app/
+https://job-hunting-management.vercel.app
 
 ## 🛠 使用技術
 
@@ -16,7 +16,8 @@ https://job-hunting-management-ahkndzx40-kennnnnnos-projects.vercel.app/
 ## 主な機能と技術的アピールポイント
 
 企業ごとのID/PWなどの機密情報を外部サーバーに送信せず、ブラウザ内データベース（IndexedDB）のみで完結させることで、プライバシーに配慮したセキュアな情報管理を実現しています。また外部データベースを利用しないことで、コストをかけずに安定したデプロイを可能にしました。
-また企業詳細モーダルを開いた際、使用頻度を考慮して「Upcoming Events（直近の予定）」「Entry Sheet / Notes(メモ)」「My Page Info(IDなど)」の順に配置しました。必要な情報を最短ステップで確認できる設計にこだわりました。
+また、スマートフォンでの使用を想定し、スマートフォンでの表示に合わせたデザインにしています。
+さらに企業詳細モーダルを開いた際、使用頻度を考慮して「Upcoming Events（直近の予定）」「Entry Sheet / Notes(メモ)」「My Page Info(IDなど)」の順に配置し、必要な情報を最短ステップで確認できる設計にこだわりました。
 
 ## ディレクトリ構成
 
