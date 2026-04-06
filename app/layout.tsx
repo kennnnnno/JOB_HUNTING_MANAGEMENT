@@ -22,8 +22,8 @@ export const metadata: Metadata = {
   title: "就活管理",
   description: "ES提出期限や選考状況をIndexedDBでローカル管理します",
   icons: {
-    icon: "/JOB.png", // ブラウザのタブ用
-    shortcut: "/JOB.png",
+    icon: "/JOB2.png", // ブラウザのタブ用
+    shortcut: "/JOB2.png",
     apple: "/JOB.png",
   },
 };
