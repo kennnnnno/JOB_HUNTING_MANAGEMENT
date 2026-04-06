@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
-import { Company } from "@/lib/db";
-import { Copy, Check, ExternalLink } from "lucide-react";
+import React, { useRef, useState } from "react";
+import { Company, exportDatabase, importDatabase } from "@/lib/db";
+import { Copy, Check, ExternalLink, Download, Upload } from "lucide-react";
 
 interface ListViewProps {
   companies: Company[] | undefined;
@@ -11,8 +11,13 @@ interface ListViewProps {
 
 export default function ListView({ companies, onSelect }: ListViewProps) {
   const [copyId, setCopyId] = useState<number | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleCopyId = (e: React.MouseEvent, id: string | undefined, companyId: number) => {
+  const handleCopyId = (
+    e: React.MouseEvent,
+    id: string | undefined,
+    companyId: number,
+  ) => {
     e.stopPropagation();
     if (!id) return;
     navigator.clipboard.writeText(id);
@@ -29,6 +34,36 @@ export default function ListView({ companies, onSelect }: ListViewProps) {
 
   return (
     <div className="space-y-4">
+      <div className="flex justify-between items-center px-4 mb-2">
+        <span className="text-[10px] font-black text-gray-300 uppercase tracking-widest">
+          Company List ({companies?.length || 0})
+        </span>
+        <div className="flex gap-4 text-gray-400">
+          <button
+            onClick={exportDatabase}
+            className="flex items-center gap-1 hover:text-blue-500 transition-colors"
+          >
+            <Download size={14} />
+            <span className="text-[10px] font-bold">SAVE</span>
+          </button>
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="flex items-center gap-1 hover:text-green-500 transition-colors"
+          >
+            <Upload size={14} />
+            <span className="text-[10px] font-bold">LOAD</span>
+          </button>
+          <input
+            type="file"
+            ref={fileInputRef}
+            className="hidden"
+            accept=".json"
+            onChange={(e) =>
+              e.target.files?.[0] && importDatabase(e.target.files[0])
+            }
+          />
+        </div>
+      </div>
       {companies?.map((company) => (
         <div
           key={company.id}
@@ -63,7 +98,11 @@ export default function ListView({ companies, onSelect }: ListViewProps) {
                     : "bg-gray-50 text-gray-400"
                 }`}
               >
-                {copyId === company.id ? <Check size={18} /> : <Copy size={18} />}
+                {copyId === company.id ? (
+                  <Check size={18} />
+                ) : (
+                  <Copy size={18} />
+                )}
               </button>
             )}
           </div>
@@ -71,7 +110,9 @@ export default function ListView({ companies, onSelect }: ListViewProps) {
       ))}
       {companies?.length === 0 && (
         <div className="text-center py-20">
-          <p className="text-gray-300 font-bold text-sm">企業が登録されていません</p>
+          <p className="text-gray-300 font-bold text-sm">
+            企業が登録されていません
+          </p>
         </div>
       )}
     </div>
